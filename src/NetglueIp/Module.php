@@ -2,8 +2,8 @@
 
 namespace NetglueIp;
 
-use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Http\PhpEnvironment\Request as PhpRequest;
 use Zend\EventManager\EventInterface;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Loader\StandardAutoloader;
@@ -18,8 +18,6 @@ class Module implements
     Feature\DependencyIndicatorInterface,
     Feature\ControllerPluginProviderInterface,
     Feature\ViewHelperProviderInterface,
-    Feature\ConsoleBannerProviderInterface,
-    Feature\ConsoleUsageProviderInterface,
     Feature\BootstrapListenerInterface
 {
     /**
@@ -67,7 +65,21 @@ class Module implements
      */
     public function onBootstrap(EventInterface $event)
     {
-
+        $request = $event->getRequest();
+        if (!$request instanceof PhpRequest) {
+            return;
+        }
+        $app = $event->getTarget();
+        $locator = $app->getServiceManager();
+        $config = $locator->get('Config');
+        if (true === $config['netglue_ip']['rewrite_remote_addr']) {
+            $service = $locator->get('NetglueIp\Service\IpService');
+            if ($ip = $service->getIp()) {
+                $serverParams = $request->getServer();
+                $serverParams->ORIGINAL_REMOTE_ADDR = $serverParams->REMOTE_ADDR;
+                $serverParams->REMOTE_ADDR = $ip;
+            }
+        }
     }
 
     /**
@@ -115,7 +127,7 @@ class Module implements
     {
         return [
             'factories' => [
-
+                'NetglueIp\Service\IpService' => 'NetglueIp\Factory\Service\IpServiceFactory'
             ],
             'invokables' => [
 
@@ -135,33 +147,12 @@ class Module implements
 
             ],
             'factories' => [
-
+                'NetglueIp\View\Helper\RealIp' => 'NetglueIp\Factory\View\Helper\RealIpFactory',
             ],
             'aliases' => [
-
+                'realIp' => 'NetglueIp\View\Helper\RealIp',
             ],
         ];
     }
 
-    /**
-     * Return console usage message
-     * @param Console $console
-     * @return array
-     */
-    public function getConsoleUsage(Console $console)
-    {
-        return [
-
-        ];
-    }
-
-    /**
-     * Return console banner
-     * @param Console $console
-     * @return string
-     */
-    public function getConsoleBanner(Console $console)
-    {
-        return 'Net Glue IP Module';
-    }
 }
