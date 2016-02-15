@@ -1,0 +1,36 @@
+{
+    "name" : "netglue/zf2-proxy-ip-module",
+    "description" : "ZF2 module to make it easier to figure out who the remote user is when you're behind proxies or load balancers etc.",
+    "licence" : "MIT",
+    "keywords" : [
+        "zf2",
+        "netglue"
+    ],
+    "homepage" : "https://netglue.uk/",
+    "authors" : [
+        {
+            "name" : "George Steel",
+            "email" : "george@net-glue.co.uk",
+            "homepage" : "https://netglue.uk/"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require" : {
+        "php" : ">=5.6",
+        "zendframework/zendframework" : "~2.4",
+    },
+    "require-dev" : {
+        "codeclimate/php-test-reporter": "dev-master"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "NetglueIp" : [ "src/", "tests/" ]
+        },
+		"classmap": [
+			"src/"
+		]
+    },
+    "repositories": [
+    ]
+}
