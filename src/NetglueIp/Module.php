@@ -13,24 +13,11 @@ use Zend\Mvc\MvcEvent;
 class Module implements
     Feature\AutoloaderProviderInterface,
     Feature\ConfigProviderInterface,
-    Feature\ControllerProviderInterface,
     Feature\ServiceProviderInterface,
-    Feature\DependencyIndicatorInterface,
     Feature\ControllerPluginProviderInterface,
     Feature\ViewHelperProviderInterface,
     Feature\BootstrapListenerInterface
 {
-    /**
-     * Expected to return an array of module names on which the current one depends on
-     *
-     * @return array
-     */
-    public function getModuleDependencies()
-    {
-        return [
-
-        ];
-    }
 
     /**
      * Return autoloader configuration
@@ -83,22 +70,6 @@ class Module implements
     }
 
     /**
-     * Return Controller Config
-     * @return array
-     */
-    public function getControllerConfig()
-    {
-        return [
-            'factories' => [
-
-            ],
-            'invokables' => [
-
-            ],
-        ];
-    }
-
-    /**
      * Return controller plugin config
      * @return array
      * @implements ControllerPluginProviderInterface
@@ -107,13 +78,10 @@ class Module implements
     {
         return [
             'factories' => [
-
-            ],
-            'invokables' => [
-
+                'NetglueIp\Controller\Plugin\RealIp' => 'NetglueIp\Factory\Controller\Plugin\RealIpFactory'
             ],
             'aliases' => [
-
+                'realIp'                             => 'NetglueIp\Controller\Plugin\RealIp'
             ],
         ];
     }
@@ -129,9 +97,6 @@ class Module implements
             'factories' => [
                 'NetglueIp\Service\IpService' => 'NetglueIp\Factory\Service\IpServiceFactory'
             ],
-            'invokables' => [
-
-            ],
         ];
     }
 
@@ -143,9 +108,6 @@ class Module implements
     public function getViewHelperConfig()
     {
         return [
-            'invokables' => [
-
-            ],
             'factories' => [
                 'NetglueIp\View\Helper\RealIp' => 'NetglueIp\Factory\View\Helper\RealIpFactory',
             ],
